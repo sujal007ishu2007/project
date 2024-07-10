@@ -7,7 +7,7 @@ const path = require('path');
 const User = require('./models/users');
 const jobRoutes = require('./routes/job');
 const userRoutes = require('./routes/user');
-const applicationRoutes = require('./routes/application'); // Import the applications route
+const applicationRoutes = require('./routes/application');
 
 const app = express();
 const port =  process.env.PORT  ||8000;
@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 100000000 }, // 100 MB file size limit
+    limits: { fileSize: 100000000 },
     fileFilter: (req, file, cb) => {
         const filetypes = /pdf|doc|docx/;
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -37,11 +37,10 @@ const upload = multer({
     }
 });
 
-// Middleware
+
 app.use(bodyParser.json());
 app.use(cors());
 
-// MongoDB connection
 mongoose.connect('mongodb://localhost/job-board', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -52,21 +51,18 @@ mongoose.connect('mongodb://localhost/job-board', {
     process.exit(1); 
 });
 
-// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/jobs', jobRoutes);
-app.use('/api/applications', applicationRoutes); // Use the applications route
+app.use('/api/applications', applicationRoutes);
 
-// Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Server error:', err);
     res.status(500).json({ message: 'Server error' });
 });
 
-// Register route with file upload using multer
 app.post('/api/users/register', upload.single('resume'), async (req, res) => {
     const { username, email, password, role, companyName, companyAddress, contactNumber } = req.body;
-    const resume = req.file ? req.file.path : null; // Get file path if uploaded
+    const resume = req.file ? req.file.path : null;
 
     if (!username || !email || !password || !role) {
         return res.status(400).json({ message: 'Please enter all fields' });
@@ -98,7 +94,7 @@ app.post('/api/users/register', upload.single('resume'), async (req, res) => {
     }
 });
 
-// Start server
+
 app.listen(port, (error) => {
     if (error) {
         console.error('Failed to start server:', error);

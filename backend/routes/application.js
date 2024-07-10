@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Application = require('../models/application');
 
-// Create a new job application
 router.post('/', async (req, res) => {
   const { jobTitle, jobDescription, skills, about, applicantName, applicantEmail } = req.body;
 
@@ -28,7 +27,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Fetch all applications
 router.get('/', async (req, res) => {
   try {
     const applications = await Application.find();
@@ -39,7 +37,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Fetch applications for a specific applicant
 router.get('/applicant/:email', async (req, res) => {
   const { email } = req.params;
 
